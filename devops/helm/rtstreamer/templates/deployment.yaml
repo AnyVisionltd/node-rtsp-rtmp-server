@@ -1,0 +1,66 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rtstreamer
+  namespace: {{ .Release.Namespace }}
+  labels:
+    tier: frontend
+    app: rtstreamer
+spec:
+  selector:
+    matchLabels:
+      app: rtstreamer
+  replicas: {{ .Values.replicas | default "1" }}
+  template:
+    metadata:
+      labels:
+        app: rtstreamer
+        run: rtstreamer
+    spec:
+      hostname: webrtc
+      restartPolicy: Always
+      nodeSelector:
+        mode: "backend"
+      imagePullSecrets:
+        - name: imagepullsecret
+      containers:
+      - name: rtstreamer
+        image: "{{ if .Values.global.imageOverride.rtstreamer }}{{ .Values.global.imageOverride.rtstreamer }}{{else}}{{ default .Values.global.registry .Values.global.localRegistry }}{{ .Values.global.repository }}{{ .Values.rtstreamer.imageName }}:{{ .Values.rtstreamer.imageTag }}{{end}}"
+        imagePullPolicy: {{ .Values.global.pullPolicy | default "IfNotPresent" }}
+        ports:
+        - containerPort: 80
+        - containerPort: 1935
+        readinessProbe:
+          httpGet: 
+            path: /
+            port: 80
+          initialDelaySeconds: 20
+          periodSeconds: 5 
+          successThreshold: 2
+          failureThreshold: 10
+        livenessProbe:
+          httpGet: 
+            path: /
+            port: 80
+          initialDelaySeconds: 20
+          periodSeconds: 5 
+          successThreshold: 1
+          failureThreshold: 10          
+        volumeMounts:
+        - name: tz-config
+          mountPath: /etc/localtime
+          readOnly: true
+        envFrom:
+        - configMapRef:
+            name: global-env
+        env:
+        - name: CONSUL_AGENT
+          value: "consul-server.{{ .Release.Namespace }}.svc.cluster.local"
+        - name: CONSUL_SERVER
+          value: $(CONSUL_AGENT)
+      volumes:
+      - name: tz-config
+        hostPath:
+           path: /etc/localtime
+           type: File

@@ -1,0 +1,4 @@
+rtstreamer:
+  imageName: node-rtsp-rtmp-server
+  imageTag: 19.05
+
