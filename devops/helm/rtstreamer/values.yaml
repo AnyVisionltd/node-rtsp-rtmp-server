@@ -1,0 +1,7 @@
+global:
+  pullPolicy: "IfNotPresent"
+  
+rtstreamer:
+  imageName: node-rtsp-rtmp-server
+  imageTag: development
+
