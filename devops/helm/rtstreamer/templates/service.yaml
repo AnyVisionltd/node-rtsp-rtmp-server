@@ -1,0 +1,22 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rtstreamer
+  namespace: {{ .Release.Namespace }}
+  labels:
+    tier: frontend
+    app: rtstreamer
+spec:
+  clusterIP: None
+  ports:
+  - name: "rtstreamer-rtsp-port"
+    port: 80
+    targetPort: 80
+    protocol: TCP
+  - name: "rtstreamer-rtmp-port"
+    port: 1935
+    targetPort: 1935
+    protocol: TCP
+  selector:
+    run: rtstreamer
