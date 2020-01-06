@@ -26,7 +26,7 @@ spec:
         - name: imagepullsecret
       containers:
       - name: rtstreamer
-        image: "{{ if .Values.global.imageOverride.rtstreamer }}{{ .Values.global.imageOverride.rtstreamer }}{{else}}{{ default .Values.global.registry .Values.global.localRegistry }}{{ .Values.global.repository }}{{ .Values.rtstreamer.imageName }}:{{ .Values.rtstreamer.imageTag }}{{end}}"
+        image: {{ template "rtstreamer.image" . }}
         imagePullPolicy: {{ .Values.global.pullPolicy | default "IfNotPresent" }}
         ports:
         - containerPort: 80

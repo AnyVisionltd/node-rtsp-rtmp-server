@@ -1,4 +1,8 @@
+global:
+  pullPolicy: "IfNotPresent"
+  
 rtstreamer:
   imageName: node-rtsp-rtmp-server
-  imageTag: 19.05
+  imageTag: development
+
 

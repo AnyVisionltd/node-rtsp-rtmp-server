@@ -1,0 +1,43 @@
+{
+  consul: '{{.CONSUL_AGENT | default "consul-agent.tls.ai"}}:{{.CONSUL_PORT | default 8500}}',
+ "logging": {
+    "level": "{{.log_level_containerpilot | default "INFO"}}",
+    "format": "default",
+    "output": "stdout"
+  },
+  jobs: [
+    {
+      name: 'configurator',
+      exec: "/usr/bin/python3 {{.APP_DIR}}/devops/configurator.py -f {{.APP_DIR}}/devops/node-rtsp-rtmp-sever_exclude.txt -c {{.CONSUL_SERVER | default "consul.tls.ai"}} -p {{.CONSUL_PORT | default 8500}}",
+      when: {
+        source: 'watch.consul-agent',
+        once: 'healthy'
+      },
+    },
+
+    {
+      name: 'node-rtsp-rtmp-server',
+      exec: ["envconsul","-log-level", "debug",
+        "-consul", "{{ .CONSUL_SERVER | default "consul.tls.ai" }}:8500",
+        "-prefix", "node-rtsp-rtmp-server", "devops/entrypoint.sh"],
+      port: {{.PORT | default 3000}},
+      restarts: "unlimited",
+      health: {
+        exec: '/usr/bin/curl -o /dev/null --fail -s http://{{.API_IP | default "api.tls.ai"}}:{{.PORT | default 3000}}',
+        interval: 5,
+        ttl: 20
+      },
+      when: {
+        source: 'configurator',
+        once: 'exitSuccess'
+      },
+    },
+  ],
+  watches: [
+     {
+      name: "consul-agent",
+      interval: 3
+    }
+  ],
+}
+
