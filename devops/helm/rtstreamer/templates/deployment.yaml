@@ -21,7 +21,7 @@ spec:
       hostname: webrtc
       restartPolicy: Always
       nodeSelector:
-        mode: "backend"
+        backend: "true"
       imagePullSecrets:
         - name: imagepullsecret
       containers:
