@@ -1,4 +1,3 @@
-ejs = require 'ejs'
 path = require 'path'
 fs = require 'fs'
 zlib = require 'zlib'
@@ -6,9 +5,6 @@ spawn = require('child_process').spawn
 Sequent = require 'sequent'
 
 logger = require './logger'
-
-# Directory to store EJS templates
-TEMPLATE_DIR = "#{__dirname}/template"
 
 # Directory to store static files
 STATIC_DIR = "#{__dirname}/public"
@@ -51,18 +47,6 @@ class HTTPHandler
       @respondCrossDomainXML req, callback
     else if filepath is '/ping'
       @respondText 'pong', req, callback
-    else if filepath is '/list'
-      opts =
-        files: [ 'foo', 'bar', 'baz' ]
-      fs.readFile "#{TEMPLATE_DIR}/list.ejs", {
-        encoding: 'utf8'
-      }, (err, template) =>
-        if err
-          logger.error err
-          @serverError req, callback
-        else
-          html = ejs.render template, opts
-          @respondHTML html, req, callback
     else if filepath is '/302'
       @redirect '/new-url', req, callback
     else if filepath is '/404'
