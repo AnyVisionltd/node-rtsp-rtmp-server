@@ -2,8 +2,8 @@ name: Whitesource Scan
 
 on:
   workflow_dispatch:
-  #schedule:
-    #- cron: '0 19 * * *'
+  schedule:
+    - cron: '0 0 * * 1,4'
   push:
     branches: [ development ]
   pull_request:
