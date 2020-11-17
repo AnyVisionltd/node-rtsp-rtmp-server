@@ -1,17 +1,19 @@
 name: Whitesource Scan
-
+env:
+  REPOSITORY_NAME: ${{ github.event.repository.name }}
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * 1,4'
+    - cron: '0 0 * * 0,3'
   push:
     branches: [ development ]
   pull_request:
     branches: [ development ]
 
 jobs:
-  WS_Scan:
+  WS_Scan_BT_230:
     # The type of runner that the job will run on
+#     if: github.ref == 'refs/heads/master-2.3.0'
     runs-on: ubuntu-latest
     
     # Steps represent a sequence of tasks that will be executed as part of the job
@@ -31,13 +33,11 @@ jobs:
         node-version: '12.x'
         registry-url: ${{secrets.JFROG_REGISTERY_URL}}
         scope: '@anyvision'
+
     - name: Install dependencies
       run: rm /home/runner/work/_temp/.npmrc && touch /home/runner/work/_temp/.npmrc && echo '_auth = ${{secrets.NPM_TOKEN}}' >> /home/runner/work/_temp/.npmrc && echo 'always-auth = true' >> /home/runner/work/_temp/.npmrc && echo 'email=${{secrets.JFROG_USER_EMAIL}}' >> /home/runner/work/_temp/.npmrc && echo '${{secrets.JFROG_REPO_PATH_1}}' >> /home/runner/work/_temp/.npmrc && echo '${{secrets.JFROG_REPO_PATH_2}}' >> /home/runner/work/_temp/.npmrc && npm install
       env:
         NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-
-    - run: echo ::set-env name=REPOSITORY_NAME::$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}' | sed -e "s/:refs//")
-      shell: bash
 
     - name: Set up Python 3.8
       uses: actions/setup-python@v2
@@ -49,4 +49,4 @@ jobs:
         python -m pip install --upgrade pip
 
     - name: run the whitesource agent
-      run: ./wss_agent.sh -apiKey ${{secrets.WS_API_KEY}} -userKey ${{secrets.WS_USER_TOKEN}} -product ${{secrets.WS_PROD_NAME}} -productToken ${{secrets.WS_PROD_TOKEN}} -project $REPOSITORY_NAME -c wss-unified-agent-cloud-v2.config -d .
+      run: ./wss_agent.sh -apiKey ${{secrets.WS_API_KEY}} -userKey ${{secrets.WS_USER_TOKEN}} -product ${{secrets.WS_PROD_NAME_BT_230}} -productToken ${{secrets.WS_PROD_TOKEN_BT_230}} -project ${{env.REPOSITORY_NAME}} -c wss-unified-agent-cloud-v2.config -d .
