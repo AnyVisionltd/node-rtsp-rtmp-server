@@ -1,21 +1,6 @@
 {
-  "scanSettings": {
-    "configMode": "EXTERNAL",
-    "configExternalURL": "https://anvitportal.s3.eu-west-3.amazonaws.com/wss-unified-agent-1.config",
-    "projectToken": "c3f4531bf497471e99687bfa7a2f867130f31700db1945918d6aebe5f53983c1",
-    "baseBranches": []
-  },
-  "checkRunSettings": {
-    "vulnerableCheckRunConclusionLevel": "failure",
-    "displayMode": "diff"
-  },
-  "issueSettings": {
-    "minSeverityLevel": "NONE",
-    "issueType": "DEPENDENCY"
-  },
-  "remediateSettings": {
-    "workflowRules": {
-      "enabled": true
-    }
+"settingsInheritedFrom": "AnyVisionltd/whitesource-config@development",
+"scanSettings": {
+    "projectToken": "c3f4531bf497471e99687bfa7a2f867130f31700db1945918d6aebe5f53983c1"
   }
 }
