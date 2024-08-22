@@ -1,8 +1,9 @@
 global:
+  registry: gcr.io
   pullPolicy: "IfNotPresent"
   
 rtstreamer:
-  imageName: node-rtsp-rtmp-server
+  imageName: anyvision-training/node-rtsp-rtmp-server
   imageTag: 19.05
 
 
